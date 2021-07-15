@@ -36,7 +36,12 @@ function request(search::String; field="all", sortBy=nothing, sortOrder=nothing)
 	bib       = extractBibInfo(entries)
 end
 
-function bibtex()
+function bibtex(bibs::Array; dir=nothing)
+	# need to do some io here...
+	#
+	# for bib in bibs
+	# 	write2file(bib)
+	# 	where bib is a dictionary containing all of the info
 
 end
 
