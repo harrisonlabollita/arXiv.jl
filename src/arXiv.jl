@@ -10,7 +10,7 @@ function extractBibInfo(Entries::Array)
 	    url = strip(content(find_element(entry, "id")))
 	    bibDict["url"]     =  url 
 	    bibDict["authors"] =  [strip(content(el)) for el in find_all_elements(entry, "author")]
-	    bibDict["journal"] =  "arXiv:$url[22:end]"  # TO-DO: this is rigid might not always work
+	    bibDict["journal"] =  "arXiv:$(url[22:end])"  # TO-DO: this is rigid might not always work
 	    push!(bibs, bibDict)
 	end
 	return bibs
@@ -29,10 +29,11 @@ end
 
 
 function request(search::String; field="all", sortBy=nothing, sortOrder=nothing)
-	base = "http://export.arxiv.org/api/query?"
-	r    = HTTP.request(:GET, base)
-	extractBibInfo(parse_string(String(r.body)))
-	
+	r         = HTTP.request(:GET, "http://export.arxiv.org/api/query?search_query=all:$search")
+	xmlString = parse_string(String(r.body))
+	master    = root(xmlString)
+	entries   = find_all_elements(master, "entry")
+	bib       = extractBibInfo(entries)
 end
 
 function bibtex()
