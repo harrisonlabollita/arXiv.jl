@@ -59,6 +59,7 @@ function bibtex(bibs::Array; dir=nothing)
 			write(io, "year={$(bib["year"])},\n")
 			write(io, "journal={$(bib["journal"])},\n")
 			write(io, "url={$(bib["url"])}")
+			write(io, "}\n")
 			write(io, "\n")
 		end
 	end
