@@ -3,11 +3,20 @@ using HTTP
 using LightXML
 
 
+
+function find_all_elements(x::XMLElement, n::AbstractString)
+	matched = []
+	for c in child_elements(x)
+		name(c) == n && push!(matched, c)
+	end
+	return matched
+end
+
 function extractBibInfo(Entries::Array)
 	bibs = []
 	for entry in Entries
-	    bibDict = Dict()
-	    url = strip(content(find_element(entry, "id")))
+	    bibDict            = Dict()
+	    url                = strip(content(find_element(entry, "id")))
 	    bibDict["year"]    = content(find_element(entry, "published"))[1:4] 
 	    bibDict["url"]     =  url 
 	    bibDict["authors"] =  [strip(content(el)) for el in find_all_elements(entry, "author")]
@@ -19,24 +28,27 @@ function extractBibInfo(Entries::Array)
 	return bibs
 end
 
+function request(search::String; field="all", 
+	 sortBy=nothing, sortOrder=nothing, maxResults=nothing)
+	println()
+	println("arXiv.jl: processing request...")
+	println("searching $(field) for $(string) with the settings:")
+	println("sortBy = $(sortBy)")
+	println("sortOrder = $(sortOrder)")
+	println("max_results = $(maxResults)")
+	println()
 	
-
-function find_all_elements(x::XMLElement, n::AbstractString)
-	matched = []
-	for c in child_elements(x)
-		name(c) == n && push!(matched, c)
-	end
-	return matched
-end
-
-
-
-function request(search::String; field="all", sortBy=nothing, sortOrder=nothing)
-	r         = HTTP.request(:GET, "http://export.arxiv.org/api/query?search_query=all:$search")
+	base      = "http://export.arxiv.org/api/query?search_query=$(field):"
+        base      *= "$(search)&"
+	if sortBy != nothing  base *= "sortBy=$(sortBy)&" end
+	if sortOrder != nothing  base *= "sortOrder=$(sortOrder)&" end
+	if maxResults != nothing  base *= "max_results=$(maxResults)" end
+	r         = HTTP.request(:GET, base)
 	xmlString = parse_string(String(r.body))
 	master    = root(xmlString)
 	entries   = find_all_elements(master, "entry")
 	bib       = extractBibInfo(entries)
+	println("writing results to bib file")
 	bibtex(bib)
 end
 
@@ -58,7 +70,7 @@ function bibtex(bibs::Array; dir=nothing)
 			write(io, "author={$(authorList)},\n")
 			write(io, "year={$(bib["year"])},\n")
 			write(io, "journal={$(bib["journal"])},\n")
-			write(io, "url={$(bib["url"])}")
+			write(io, "url={$(bib["url"])}\n")
 			write(io, "}\n")
 			write(io, "\n")
 		end
