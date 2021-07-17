@@ -36,13 +36,11 @@ function request(
     sortOrder = nothing,
     maxResults = nothing,
 )
-    println()
     println("\narXiv.jl: processing request...")
     println("searching $(field) for $(search) with the settings:")
     println("sortBy = $(sortBy)")
     println("sortOrder = $(sortOrder)")
     println("max_results = $(maxResults)\n") #?: why "sortBy" and "sortOrder" maintain their form when printed, but "maxResults" is changed to "max_results"
-    println()
 
     base = "http://export.arxiv.org/api/query?search_query=$(field):"
     base *= "$(search)&"
