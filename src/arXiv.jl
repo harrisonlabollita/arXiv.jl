@@ -43,15 +43,11 @@ function request(
     println("max_results = $(max_results)\n")
     base = "http://export.arxiv.org/api/query?search_query=$(field):"
     base *= "$(search)&"
-    if !isnothing(sortBy)
-        base *= "sortBy=$(sortBy)&"
-    end
-    if !isnothing(sortOrder)
-        base *= "sortOrder=$(sortOrder)&"
-    end
-    if !isnothing(max_results)
-        base *= "max_results=$(max_results)"
-    end
+
+    isnothing(sortBy) || (base *= "sortBy=$(sortBy)&")
+    isnothing(sortOrder) || (base *= "sortOrder=$(sortOrder)&")
+    isnothing(max_results) || (base *= "max_results=$(max_results)")
+
     r = HTTP.request(:GET, base)
     xmlString = parse_string(String(r.body))
     master = root(xmlString)
@@ -63,7 +59,7 @@ end
 
 function bibtex(bibs::Array; dir = nothing)
     if isnothing(dir)
-        open("arxiv2bib.bib", "w") do io
+        open("arxiv2bib.bib", "a") do io
             for bib in bibs
                 write(io, "\n")
                 write(io, "@article{$(bib["key"]),\n")
