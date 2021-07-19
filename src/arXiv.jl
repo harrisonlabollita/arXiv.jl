@@ -20,8 +20,9 @@ function extract_bib_info(Entries::Array)
         bibDict["url"] = url
         bibDict["authors"] =
             [strip(content(el)) for el in find_all_elements(entry, "author")]
-        bibDict["key"] = bibDict["authors"][1] * bibDict["year"]
-        bibDict["journal"] = "arXiv:$(url[22:end])"  # TODO: this is rigid might not always work
+	first_author = split(bibDict["authors"][1], " ")
+	bibDict["key"]     = first_author[findmax(length.(first_author))[2]] * bibDict["year"]
+        bibDict["journal"] = "arXiv:$(url[22:end])"  # TODO: this is rigid; might not always work
         bibDict["title"] = content(find_element(entry, "title"))
         push!(bibs, bibDict)
     end
@@ -39,8 +40,7 @@ function request(
     println("searching $(field) for $(search) with the settings:")
     println("sortBy = $(sortBy)")
     println("sortOrder = $(sortOrder)")
-    println("max_results = $(max_results)\n") #?: why "sortBy" and "sortOrder" maintain their form when printed, but "maxResults" is changed to "max_results"
-
+    println("max_results = $(max_results)\n")
     base = "http://export.arxiv.org/api/query?search_query=$(field):"
     base *= "$(search)&"
     if !isnothing(sortBy)
@@ -49,14 +49,14 @@ function request(
     if !isnothing(sortOrder)
         base *= "sortOrder=$(sortOrder)&"
     end
-    if !isnothing(maxResults)
+    if !isnothing(max_results)
         base *= "max_results=$(max_results)"
     end
     r = HTTP.request(:GET, base)
     xmlString = parse_string(String(r.body))
     master = root(xmlString)
     entries = find_all_elements(master, "entry")
-    bib = extractBibInfo(entries)
+    bib = extract_bib_info(entries)
     println("writing results to bib file")
     bibtex(bib)
 end
@@ -66,10 +66,10 @@ function bibtex(bibs::Array; dir = nothing)
         open("arxiv2bib.bib", "w") do io
             for bib in bibs
                 write(io, "\n")
-                write(io, "@article{$(bib["key"])\n")
-                write(io, "title={$(bib["title"])\n")
+                write(io, "@article{$(bib["key"]),\n")
+		write(io, "title={$(bib["title"])},\n")
                 authorList = ""
-                for (a, author) in bib["authors"]
+                for (a, author) in enumerate(bib["authors"])
                     if a != length(bib["authors"])
                         authorList *= "$(author) and "
                     else
