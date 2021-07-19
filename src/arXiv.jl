@@ -3,7 +3,6 @@ using HTTP
 using LightXML
 
 
-
 function find_all_elements(x::XMLElement, n::AbstractString)
     matched = []
     for c in child_elements(x)
@@ -12,7 +11,7 @@ function find_all_elements(x::XMLElement, n::AbstractString)
     return matched
 end
 
-function extractBibInfo(Entries::Array)
+function extract_bib_info(Entries::Array)
     bibs = []
     for entry in Entries
         bibDict = Dict()
@@ -34,13 +33,13 @@ function request(
     field = "all",
     sortBy = nothing,
     sortOrder = nothing,
-    maxResults = nothing,
+    max_results = nothing,
 )
     println("\narXiv.jl: processing request...")
     println("searching $(field) for $(search) with the settings:")
     println("sortBy = $(sortBy)")
     println("sortOrder = $(sortOrder)")
-    println("max_results = $(maxResults)\n") #?: why "sortBy" and "sortOrder" maintain their form when printed, but "maxResults" is changed to "max_results"
+    println("max_results = $(max_results)\n") #?: why "sortBy" and "sortOrder" maintain their form when printed, but "maxResults" is changed to "max_results"
 
     base = "http://export.arxiv.org/api/query?search_query=$(field):"
     base *= "$(search)&"
@@ -51,7 +50,7 @@ function request(
         base *= "sortOrder=$(sortOrder)&"
     end
     if !isnothing(maxResults)
-        base *= "max_results=$(maxResults)"
+        base *= "max_results=$(max_results)"
     end
     r = HTTP.request(:GET, base)
     xmlString = parse_string(String(r.body))
