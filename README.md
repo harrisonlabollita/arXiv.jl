@@ -1,12 +1,2 @@
 # arXiv.jl
-
-## Under development
-
-
-## Example
-From the Julia REPL, (once we load the package and export the function request we won't need the preface)
-
-```
-bib = Main.arXiv.request("electron")
-```
-This returns a list of bib entries as a dictionary. The function bibtex will be used to write this list of bibs to a bib file.
+A [Julia](https://julialang.org) wrapper to access the [arXiv API](https://arxiv.org/help/api) and create properly formatted .bib file from the search results.
