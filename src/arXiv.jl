@@ -1,19 +1,10 @@
 module arXiv
+#using LightXML: include
 using Base: Integer
 using HTTP
 using LightXML
 
-macro exported_enum(name, args...)
-    esc(quote
-        @enum($name, $(args...))
-        export $name
-        $([:(export $arg) for arg in args]...)
-    end)
-end
-
-@exported_enum SortBy relevance lastUpdatedDate submittedDate
-@exported_enum SortOrder ascending descending
-@exported_enum Field ti au abs co jr rn id all
+include("arXiv.jl")
 
 function find_all_elements(x::XMLElement, n::AbstractString)
     matched = []
@@ -44,19 +35,19 @@ end
 function request(
     search::String;
     field::Field = all,
-    sortBy::SortBy = relevance,
-    sortOrder::SortOrder = descending,
+    sort_by::SortBy = relevance,
+    sort_order::SortOrder = descending,
     max_results::Integer = 10,
 )
     println("\narXiv.jl: processing request...")
     println("searching $(field) for $(search) with the settings:")
-    println("sortBy = $(sortBy)")
-    println("sortOrder = $(sortOrder)")
+    println("sortBy = $(sort_by)")
+    println("sortOrder = $(sort_order)")
     println("max_results = $(max_results)\n")
     base = "http://export.arxiv.org/api/query?search_query=$(field):"
     base *= "$(search)&"
-    base *= "sortBy=$(sortBy)&"
-    base *= "sortOrder=$(sortOrder)&"
+    base *= "sortBy=$(sort_by)&"
+    base *= "sortOrder=$(sort_order)&"
     base *= "max_results=$(max_results)"
 
     r = HTTP.request(:GET, base)
