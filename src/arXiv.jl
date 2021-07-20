@@ -72,49 +72,28 @@ end
 
 function bibtex(bibs::Array, filename)
     if isnothing(filename)
-        open("arxiv2bib.bib", "a") do io
-            for bib in bibs
-                write(io, "\n")
-                write(io, "@article{$(bib["key"]),\n")
-                write(io, "title={$(bib["title"])},\n")
-                authorList = ""
-                for (a, author) in enumerate(bib["authors"])
-                    if a != length(bib["authors"])
-                        authorList *= "$(author) and "
-                    else
-                        authorList *= "$(author)"
-                    end
-                end
-                write(io, "author={$(authorList)},\n")
-                write(io, "year={$(bib["year"])},\n")
-                write(io, "journal={$(bib["journal"])},\n")
-                write(io, "url={$(bib["url"])}\n")
-                write(io, "}\n")
-                write(io, "\n")
-            end
-        end
+        io = open("arxiv2bib.bib", "a")
     else
-	open("$(filename).bib", "a") do io
-            for bib in bibs
-                write(io, "\n")
-                write(io, "@article{$(bib["key"]),\n")
-                write(io, "title={$(bib["title"])},\n")
-                authorList = ""
-                for (a, author) in enumerate(bib["authors"])
-                    if a != length(bib["authors"])
-                        authorList *= "$(author) and "
-                    else
-                        authorList *= "$(author)"
-                    end
-                end
-                write(io, "author={$(authorList)},\n")
-                write(io, "year={$(bib["year"])},\n")
-                write(io, "journal={$(bib["journal"])},\n")
-                write(io, "url={$(bib["url"])}\n")
-                write(io, "}\n")
-                write(io, "\n")
-            end
-        end
+	io = open("$(filename).bib", "a")
+    end
+    for bib in bibs
+	write(io, "\n")
+	write(io, "@article{$(bib["key"]),\n")
+	write(io, "title={$(bib["title"])},\n")
+	authorList = ""
+	for (a, author) in enumerate(bib["authors"])
+	    if a != length(bib["authors"])
+		authorList *= "$(author) and "
+	    else
+		authorList *= "$(author)"
+	    end
+	end
+	write(io, "author={$(authorList)},\n")
+	write(io, "year={$(bib["year"])},\n")
+	write(io, "journal={$(bib["journal"])},\n")
+	write(io, "url={$(bib["url"])}\n")
+	write(io, "}\n")
+	write(io, "\n")
     end
 end
 
