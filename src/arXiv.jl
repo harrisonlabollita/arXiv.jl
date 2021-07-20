@@ -45,21 +45,21 @@ end
 function request(
     search::String;
     field::Field = all,
-    sortBy::SortBy = relevance,
-    sortOrder::SortOrder = descending,
+    sort_by::SortBy = relevance,
+    sort_order::SortOrder = descending,
     max_results::Integer = 10,
     filename = nothing,
 
 )
     println("\narXiv.jl: processing request...")
     println("searching $(field) for $(search) with the settings:")
-    println("sortBy = $(sortBy)")
-    println("sortOrder = $(sortOrder)")
+    println("sortBy = $(sort_by)")
+    println("sortOrder = $(sort_order)")
     println("max_results = $(max_results)\n")
     base = "http://export.arxiv.org/api/query?search_query=$(field):"
     base *= "$(search)&"
-    base *= "sortBy=$(sortBy)&"
-    base *= "sortOrder=$(sortOrder)&"
+    base *= "sortBy=$(sort_by)&"
+    base *= "sortOrder=$(sort_order)&"
     base *= "max_results=$(max_results)"
 
     r = HTTP.request(:GET, base)
