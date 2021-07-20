@@ -47,6 +47,8 @@ function request(
     sortBy::SortBy = relevance,
     sortOrder::SortOrder = descending,
     max_results::Integer = 10,
+    filename = nothing,
+
 )
     println("\narXiv.jl: processing request...")
     println("searching $(field) for $(search) with the settings:")
@@ -65,12 +67,34 @@ function request(
     entries = find_all_elements(master, "entry")
     bib = extract_bib_info(entries)
     println("writing results to bib file")
-    bibtex(bib)
+    bibtex(bib, filename)
 end
 
-function bibtex(bibs::Array; dir = nothing)
-    if isnothing(dir)
+function bibtex(bibs::Array, filename)
+    if isnothing(filename)
         open("arxiv2bib.bib", "a") do io
+            for bib in bibs
+                write(io, "\n")
+                write(io, "@article{$(bib["key"]),\n")
+                write(io, "title={$(bib["title"])},\n")
+                authorList = ""
+                for (a, author) in enumerate(bib["authors"])
+                    if a != length(bib["authors"])
+                        authorList *= "$(author) and "
+                    else
+                        authorList *= "$(author)"
+                    end
+                end
+                write(io, "author={$(authorList)},\n")
+                write(io, "year={$(bib["year"])},\n")
+                write(io, "journal={$(bib["journal"])},\n")
+                write(io, "url={$(bib["url"])}\n")
+                write(io, "}\n")
+                write(io, "\n")
+            end
+        end
+    else
+	open("$(filename).bib", "a") do io
             for bib in bibs
                 write(io, "\n")
                 write(io, "@article{$(bib["key"]),\n")
