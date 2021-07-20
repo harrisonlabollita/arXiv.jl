@@ -11,11 +11,19 @@ macro exported_enum(name, args...)
         $([:(export $arg) for arg in args]...)
     end)
 end
-
+    
 @exported_enum SortBy relevance lastUpdatedDate submittedDate
 @exported_enum SortOrder ascending descending
-@exported_enum Field ti au abs co jr rn id all
+@exported_enum Field ti au abs co jr rn id all 
 
+#TODO: arXiv API allows for AND, OR, and ANDNOT searches allowing for people to use different fields
+# It would be slick to incorporate this as well
+# one idea would be to do field specific searching so like all= , title=, author= , etc. and concatentate this together,
+# but let me know if you can think of anything cleaner. Maybe we can write a search struct
+# struct search
+#    fields
+# end
+    
 function find_all_elements(x::XMLElement, n::AbstractString)
     matched = []
     for c in child_elements(x)
@@ -23,7 +31,7 @@ function find_all_elements(x::XMLElement, n::AbstractString)
     end
     return matched
 end
-
+    
 function extract_bib_info(Entries::Array)
     bibs = []
     for entry in Entries
@@ -60,7 +68,7 @@ function request(
     base *= "sortBy=$(sort_by)&"
     base *= "sortOrder=$(sort_order)&"
     base *= "max_results=$(max_results)"
-
+    
     r = HTTP.request(:GET, base)
     xmlString = parse_string(String(r.body))
     master = root(xmlString)
@@ -95,7 +103,7 @@ function bibtex(bibs::Array, filename)
         write(io, "\n")
     end
 end
-
+    
 export request
 
 end # module
