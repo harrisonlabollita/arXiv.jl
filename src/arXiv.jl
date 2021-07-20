@@ -1,10 +1,19 @@
 module arXiv
-#using LightXML: include
 using Base: Integer
 using HTTP
 using LightXML
 
-include("arXiv.jl")
+macro exported_enum(name, args...)
+    esc(quote
+        @enum($name, $(args...))
+        export $name
+        $([:(export $arg) for arg in args]...)
+    end)
+end
+
+@exported_enum SortBy relevance lastUpdatedDate submittedDate
+@exported_enum SortOrder ascending descending
+@exported_enum Field ti au abs co jr rn id all
 
 function find_all_elements(x::XMLElement, n::AbstractString)
     matched = []
