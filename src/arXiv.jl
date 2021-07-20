@@ -1,7 +1,19 @@
 module arXiv
+using Base: Integer
 using HTTP
 using LightXML
 
+macro exported_enum(name, args...)
+    esc(quote
+        @enum($name, $(args...))
+        export $name
+        $([:(export $arg) for arg in args]...)
+    end)
+end
+
+@exported_enum SortBy relevance lastUpdatedDate submittedDate
+@exported_enum SortOrder ascending descending
+@exported_enum Field ti au abs co jr rn id all
 
 function find_all_elements(x::XMLElement, n::AbstractString)
     matched = []
@@ -20,8 +32,8 @@ function extract_bib_info(Entries::Array)
         bibDict["url"] = url
         bibDict["authors"] =
             [strip(content(el)) for el in find_all_elements(entry, "author")]
-	first_author = split(bibDict["authors"][1], " ")
-	bibDict["key"]     = first_author[findmax(length.(first_author))[2]] * bibDict["year"]
+        first_author = split(bibDict["authors"][1], " ")
+        bibDict["key"] = first_author[findmax(length.(first_author))[2]] * bibDict["year"]
         bibDict["journal"] = "arXiv:$(url[22:end])"  # TODO: this is rigid; might not always work
         bibDict["title"] = content(find_element(entry, "title"))
         push!(bibs, bibDict)
@@ -31,10 +43,10 @@ end
 
 function request(
     search::String;
-    field = "all",
-    sortBy = nothing,
-    sortOrder = nothing,
-    max_results = nothing,
+    field::Field = all,
+    sortBy::SortBy = relevance,
+    sortOrder::SortOrder = descending,
+    max_results::Integer = 10,
 )
     println("\narXiv.jl: processing request...")
     println("searching $(field) for $(search) with the settings:")
@@ -43,10 +55,9 @@ function request(
     println("max_results = $(max_results)\n")
     base = "http://export.arxiv.org/api/query?search_query=$(field):"
     base *= "$(search)&"
-
-    isnothing(sortBy) || (base *= "sortBy=$(sortBy)&")
-    isnothing(sortOrder) || (base *= "sortOrder=$(sortOrder)&")
-    isnothing(max_results) || (base *= "max_results=$(max_results)")
+    base *= "sortBy=$(sortBy)&"
+    base *= "sortOrder=$(sortOrder)&"
+    base *= "max_results=$(max_results)"
 
     r = HTTP.request(:GET, base)
     xmlString = parse_string(String(r.body))
@@ -63,7 +74,7 @@ function bibtex(bibs::Array; dir = nothing)
             for bib in bibs
                 write(io, "\n")
                 write(io, "@article{$(bib["key"]),\n")
-		write(io, "title={$(bib["title"])},\n")
+                write(io, "title={$(bib["title"])},\n")
                 authorList = ""
                 for (a, author) in enumerate(bib["authors"])
                     if a != length(bib["authors"])
@@ -82,5 +93,7 @@ function bibtex(bibs::Array; dir = nothing)
         end
     end
 end
+
 export request
+
 end # module
