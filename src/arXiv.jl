@@ -35,17 +35,17 @@ end
 function extract_bib_info(Entries::Array)
     bibs = []
     for entry in Entries
-        bibDict = Dict()
+        bib_dict = Dict()
         url = strip(content(find_element(entry, "id")))
-        bibDict["year"] = content(find_element(entry, "published"))[1:4]
-        bibDict["url"] = url
-        bibDict["authors"] =
+        bib_dict["year"] = content(find_element(entry, "published"))[1:4]
+        bib_dict["url"] = url
+        bib_dict["authors"] =
             [strip(content(el)) for el in find_all_elements(entry, "author")]
-        first_author = split(bibDict["authors"][1], " ")
-        bibDict["key"] = first_author[findmax(length.(first_author))[2]] * bibDict["year"]
-        bibDict["journal"] = "arXiv:$(url[22:end])"  # TODO: this is rigid; might not always work
-        bibDict["title"] = content(find_element(entry, "title"))
-        push!(bibs, bibDict)
+        first_author = split(bib_dict["authors"][1], " ")
+        bib_dict["key"] = first_author[findmax(length.(first_author))[2]] * bib_dict["year"]
+        bib_dict["journal"] = "arXiv:$(url[22:end])"  # TODO: this is rigid; might not always work
+        bib_dict["title"] = content(find_element(entry, "title"))
+        push!(bibs, bib_dict)
     end
     return bibs
 end
@@ -87,12 +87,12 @@ function bibtex(bibs::Array, filename)
         write(io, "\n")
         write(io, "@article{$(bib["key"]),\n")
         write(io, "title={$(bib["title"])},\n")
-        authorList = ""
+        author_list = ""
         for (a, author) in enumerate(bib["authors"])
             if a != length(bib["authors"])
-                authorList *= "$(author) and "
+                author_list *= "$(author) and "
             else
-                authorList *= "$(author)"
+                author_list *= "$(author)"
             end
         end
         write(io, "author={$(authorList)},\n")
