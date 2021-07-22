@@ -11,10 +11,12 @@ macro exported_enum(name, args...)
         $([:(export $arg) for arg in args]...)
     end)
 end
-    
+
 @exported_enum SortBy relevance lastUpdatedDate submittedDate
 @exported_enum SortOrder ascending descending
-@exported_enum Field ti au abs co jr rn id all 
+@exported_enum Field ti au abs co jr rn id all
+
+include("print_fxn.jl")
 
 #TODO: arXiv API allows for AND, OR, and ANDNOT searches allowing for people to use different fields
 # It would be slick to incorporate this as well
@@ -23,7 +25,7 @@ end
 # struct search
 #    fields
 # end
-    
+
 function find_all_elements(x::XMLElement, n::AbstractString)
     matched = []
     for c in child_elements(x)
@@ -31,7 +33,7 @@ function find_all_elements(x::XMLElement, n::AbstractString)
     end
     return matched
 end
-    
+
 function extract_bib_info(Entries::Array)
     bibs = []
     for entry in Entries
@@ -56,19 +58,15 @@ function request(
     sort_by::SortBy = relevance,
     sort_order::SortOrder = descending,
     max_results::Integer = 10,
-    filename = nothing,
+    filename::String = "arxiv2bib",
 )
-    println("\narXiv.jl: processing request...")
-    println("searching $(field) for $(search) with the settings:")
-    println("sortBy = $(sort_by)")
-    println("sortOrder = $(sort_order)")
-    println("max_results = $(max_results)\n")
+    print_searching(search, field, sort_by, sort_order, max_results)
     base = "http://export.arxiv.org/api/query?search_query=$(field):"
     base *= "$(search)&"
     base *= "sortBy=$(sort_by)&"
     base *= "sortOrder=$(sort_order)&"
     base *= "max_results=$(max_results)"
-    
+
     r = HTTP.request(:GET, base)
     xmlString = parse_string(String(r.body))
     master = root(xmlString)
@@ -77,8 +75,7 @@ function request(
     bibtex(bib, filename)
 end
 
-function bibtex(bibs::Array, filename)
-    isnothing(filename) && (filename = "arxiv2bib")
+function bibtex(bibs::Array, filename::String)
     io = open("$(filename).bib", "a")
     println("writing results to $(filename).bib")
 
@@ -102,8 +99,9 @@ function bibtex(bibs::Array, filename)
         write(io, "}\n")
         write(io, "\n")
     end
+    close(io)
 end
-    
+
 export request
 
 end # module
