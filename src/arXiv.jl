@@ -95,7 +95,7 @@ function bibtex(bibs::Array, filename)
                 author_list *= "$(author)"
             end
         end
-        write(io, "author={$(authorList)},\n")
+        write(io, "author={$(author_List)},\n")
         write(io, "year={$(bib["year"])},\n")
         write(io, "journal={$(bib["journal"])},\n")
         write(io, "url={$(bib["url"])}\n")
