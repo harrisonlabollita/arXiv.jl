@@ -17,27 +17,28 @@ end
 @exported_enum Field title author abstract comment jour_ref report_num id_list all_fields
 
 n2f = Dict(
-    title	=> "ti",
-    author      => "au",
-    abstract    => "abs",
-    comment     => "co",
-    jour_ref    => "jr",
-    report_num  => "rn",
-    id_list     => "id",
-    all_fields  => "all"
+    title => "ti",
+    author => "au",
+    abstract => "abs",
+    comment => "co",
+    jour_ref => "jr",
+    report_num => "rn",
+    id_list => "id",
+    all_fields => "all",
 )
 
 
 include("print_fxn.jl")
 
 
-struct bib_info 
+mutable struct BibInfo
     url::String
     year::String
-    authors::Array{String, 1}
+    authors::Vector{String}
     title::String
     key::String
     journal::String
+    BibInfo() = new()
 end
 
 #TODO: arXiv API allows for AND, OR, and ANDNOT searches allowing for people to use different fields
@@ -56,18 +57,19 @@ function find_all_elements(x::XMLElement, n::AbstractString)
     return matched
 end
 
-function extract_bib_info(Entries::Array)
-    bibs = []
-    for entry in Entries
-        url = strip(content(find_element(entry, "id")))
-	year = content(find_element(entry, "published"))[1:4]
-	authors = [strip(content(el)) for el in find_all_elements(entry, "author")]
-        title = content(find_element(entry, "title"))
-        first_author = split(authors[1], " ")
-	key = first_author[findmax(length.(first_author))[2]] * year * title[1:4]
-        journal = "arXiv:$(url[22:end])" # TODO: this is rigid; might not always work
-
-	push!(bibs, bib_info(url, year, authors, title, key, journal))
+function extract_bib_info(entries::Array)
+    bibs = BibInfo[]
+    bib = BibInfo()
+    for entry in entries
+        bib.url = strip(content(find_element(entry, "id")))
+        bib.year = content(find_element(entry, "published"))[1:4]
+        bib.authors = [strip(content(el)) for el in find_all_elements(entry, "author")]
+        bib.title = content(find_element(entry, "title"))
+        first_author = split(bib.authors[1], " ")
+        bib.key =
+            first_author[findmax(length.(first_author))[2]] * bib.year * bib.title[1:4]
+        bib.journal = "arXiv:$(bib.url[22:end])" # TODO: this is rigid; might not always work
+        push!(bibs, deepcopy(bib))
     end
     return bibs
 end
