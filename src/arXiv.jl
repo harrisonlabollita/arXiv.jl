@@ -16,7 +16,7 @@ end
 @exported_enum SortOrder ascending descending
 @exported_enum Field title author abstract comment jour_ref report_num id_list all_fields
 
-n2f = Dict(
+n2f = Dict{Field, String}(
     title => "ti",
     author => "au",
     abstract => "abs",
@@ -93,8 +93,8 @@ function request(
     xmlString = parse_string(String(r.body))
     master = root(xmlString)
     entries = find_all_elements(master, "entry")
-    bib = extract_bib_info(entries)
-    bibtex(bib, filename)
+    bibs = extract_bib_info(entries)
+    bibtex(bibs, filename)
 end
 
 function bibtex(bibs::Array, filename::String)
