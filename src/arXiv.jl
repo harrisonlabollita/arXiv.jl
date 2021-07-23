@@ -27,9 +27,7 @@ n2f = Dict{Field, String}(
     all_fields => "all",
 )
 
-
 include("print_fxn.jl")
-
 
 mutable struct BibInfo
     url::String
@@ -97,7 +95,7 @@ function request(
     bibtex(bibs, filename)
 end
 
-function bibtex(bibs::Array, filename::String)
+function bibtex(bibs::Vector{BibInfo}, filename::String)
     io = open("$(filename).bib", "a")
     println("writing results to $(filename).bib")
 
