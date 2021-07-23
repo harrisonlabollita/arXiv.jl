@@ -81,7 +81,7 @@ function request(
     filename::String = "arxiv2bib",
 )
     print_searching(search, field, sort_by, sort_order, max_results)
-    base = "http://export.arxiv.org/api/query?search_query=$(n2f(field)):"
+    base = "http://export.arxiv.org/api/query?search_query=$(n2f[field]):"
     base *= "$(search)&"
     base *= "sortBy=$(sort_by)&"
     base *= "sortOrder=$(sort_order)&"
