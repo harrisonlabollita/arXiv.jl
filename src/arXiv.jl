@@ -72,6 +72,39 @@ function extract_bib_info(entries::Array)
     return bibs
 end
 
+@doc raw"""
+                             Welcome to arXiv.jl!
+
+
+ **default**: request(search; 
+	 field = all\_fields, 
+	 sort\_by = relevance, 
+	 sort\_order = descending,
+	 max\_results = 10,
+	 filename = "arxiv2bib")
+
+**details**:
+
+(search)     A string defining your search request to the arXiv API
+
+(field)      Field options for your search include: title,
+						    author,
+						    abstract,
+						    comment,
+						    jour\_ref (journal reference),
+						    report\_num (report number),
+						    id\_list,
+						    all\_fields
+
+(sort\_by)     You can sort your results by relevance, lastUpdatedDate, and submittedDate
+
+(sort\_order)  You cor sort your results in order of ascending, descending
+
+(max\_results) An integer defining the maximum number of results we should fetch
+
+(filename)    Default filename for the generated bib file is arxiv2bib
+
+"""
 function request(
     search::String;
     field::Field = all_fields,
