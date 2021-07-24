@@ -21,7 +21,7 @@ include("bib2tex.jl")
 
 # default: 
 ```julia
-request(keyword; field = all_fields, sort_by = relevance, sort_order = descending, max_results = 10, filename = "arxiv2bib")
+request(keyword; field=all_fields, sort_by=relevance, sort_order=descending, max_results=10, filename="arxiv2bib")
 ```
 
 # details:
@@ -49,7 +49,7 @@ request(keyword; field = all_fields, sort_by = relevance, sort_order = descendin
 ```jldoctest
 julia> request("electron")
 
-julia> request("LaBollita"; field=author, max_results=5, filename="my\_publications")
+julia> request("LaBollita"; field=author, max_results=5, filename="my_publications")
 ```
 """
 function request(
