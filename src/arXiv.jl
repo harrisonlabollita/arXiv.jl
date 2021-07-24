@@ -2,7 +2,6 @@ module arXiv
 using Base: Integer
 using LightXML
 using HTTP
-using Dates
 
 include("types.jl")
 include("message.jl")
