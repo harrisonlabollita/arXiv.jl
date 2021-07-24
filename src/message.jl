@@ -1,4 +1,4 @@
-function print_searching(
+function search_msg(
     search::String,
     field::Field,
     sort_by::SortBy,
