@@ -1,6 +1,7 @@
 using LightXML
 
-function find_all_elements(x::XMLElement, n::String)
+
+function find_all_elements(x::XMLElement, n::String) :: XMLElement # hopefully this will be added to LightXML.jl
     matched = XMLElement[]
     for c in child_elements(x)
         name(c) == n && push!(matched, c)
@@ -8,6 +9,9 @@ function find_all_elements(x::XMLElement, n::String)
     return matched
 end
 
+"""
+remove bib info from the xml data pulled from the arXiv API.
+"""
 function extract_bib_info(entries::Vector{XMLElement})
     bibs = BibInfo[]
     bib = BibInfo()

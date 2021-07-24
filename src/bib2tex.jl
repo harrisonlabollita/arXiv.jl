@@ -1,5 +1,7 @@
 using Dates: now
-
+"""
+convert an array of bib data into a bib file ready to be used in your latex document.
+"""
 function bibtex(bibs::Vector{BibInfo}, filename::String)
     io = open("$(filename).bib", "a")
     println("writing results to $(filename).bib")

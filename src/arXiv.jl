@@ -28,7 +28,7 @@ request(keyword; field = all_fields, sort_by = relevance, sort_order = descendin
 `keyword`     A string defining your search request to the arXiv API.
 
 `field`      Field options for your search include: 
-                            `title`,
+						    `title`,
 						    `author`,
 						    `abstract`,
 						    `comment`,
@@ -49,7 +49,7 @@ request(keyword; field = all_fields, sort_by = relevance, sort_order = descendin
 ```jldoctest
 julia> request("electron")
 
-julia> request("LaBollita"; field=author, max_results=5)
+julia> request("LaBollita"; field=author, max_results=5, filename="my\_publications")
 ```
 """
 function request(
