@@ -16,7 +16,7 @@ end
 @exported_enum SortOrder ascending descending
 @exported_enum Field title author abstract comment jour_ref report_num id_list all_fields
 
-n2f = Dict{Field, String}(
+n2f = Dict{Field,String}(
     title => "ti",
     author => "au",
     abstract => "abs",
@@ -75,47 +75,50 @@ end
 @doc raw"""
                              Welcome to arXiv.jl!
 
+# default: 
+```julia
+request(keyword; field = all_fields, sort_by = relevance, sort_order = descending, max_results = 10, filename = "arxiv2bib")
+```
 
- **default**: request(search; 
-	 field = all\_fields, 
-	 sort\_by = relevance, 
-	 sort\_order = descending,
-	 max\_results = 10,
-	 filename = "arxiv2bib")
+# details:
+`keyword`     A string defining your search request to the arXiv API.
 
-**details**:
+`field`      Field options for your search include: 
+                            `title`,
+						    `author`,
+						    `abstract`,
+						    `comment`,
+						    `jour_ref` (journal reference),
+						    `report_num` (report number),
+						    `id_list`,
+						    `all_fields`.
 
-(search)     A string defining your search request to the arXiv API
+`sort_by`     You can sort your results by `relevance`, `lastUpdatedDate`, and `submittedDate`.
 
-(field)      Field options for your search include: title,
-						    author,
-						    abstract,
-						    comment,
-						    jour\_ref (journal reference),
-						    report\_num (report number),
-						    id\_list,
-						    all\_fields
+`sort_order`  You cor sort your results in order of `ascending`, `descending`.
 
-(sort\_by)     You can sort your results by relevance, lastUpdatedDate, and submittedDate
+`max_results` An integer defining the maximum number of results we should fetch.
 
-(sort\_order)  You cor sort your results in order of ascending, descending
+`filename`    Default filename for the generated bib file is arxiv2bib.
 
-(max\_results) An integer defining the maximum number of results we should fetch
+# Examples
+```jldoctest
+julia> request("electron")
 
-(filename)    Default filename for the generated bib file is arxiv2bib
-
+julia> request("LaBollita"; field=author, max_results=5)
+```
 """
 function request(
-    search::String;
+    keyword::String;
     field::Field = all_fields,
     sort_by::SortBy = relevance,
     sort_order::SortOrder = descending,
     max_results::Integer = 10,
     filename::String = "arxiv2bib",
 )
-    print_searching(search, field, sort_by, sort_order, max_results)
+    print_searching(keyword, field, sort_by, sort_order, max_results)
     base = "http://export.arxiv.org/api/query?search_query=$(n2f[field]):"
-    base *= "$(search)&"
+    base *= "$(keyword)&"
     base *= "sortBy=$(sort_by)&"
     base *= "sortOrder=$(sort_order)&"
     base *= "max_results=$(max_results)"
