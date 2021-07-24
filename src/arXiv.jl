@@ -95,7 +95,7 @@ request(keyword; field = all_fields, sort_by = relevance, sort_order = descendin
 
 `sort_by`     You can sort your results by `relevance`, `lastUpdatedDate`, and `submittedDate`.
 
-`sort_order`  You cor sort your results in order of `ascending`, `descending`.
+`sort_order`  You can sort your results in order of `ascending`, `descending`.
 
 `max_results` An integer defining the maximum number of results we should fetch.
 
