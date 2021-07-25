@@ -60,13 +60,13 @@ function request(
     filename::String = "arxiv2bib",
 )
     search_msg(keyword, field, sort_by, sort_order, max_results)
-    base = "http://export.arxiv.org/api/query?search_query=$(n2f[field]):"
-    base *= "$(keyword)&"
-    base *= "sortBy=$(sort_by)&"
-    base *= "sortOrder=$(sort_order)&"
-    base *= "max_results=$(max_results)"
+    api_call = "http://export.arxiv.org/api/query?search_query=$(n2f[field]):"
+    api_call *= "$(keyword)&"
+    api_call *= "sortBy=$(sort_by)&"
+    api_call *= "sortOrder=$(sort_order)&"
+    api_call *= "max_results=$(max_results)"
 
-    xml = url2xml(base)
+    xml = url2xml(api_call)
     entries = find_all_elements(xml, "entry")
     bibs = extract_bib_info(entries)
     bibtex(bibs, filename)
