@@ -28,7 +28,7 @@ request("electron")
 
 Keep an updated bib file with all of your arXiv publications!
 ```julia
-request("LaBollita"; field=author, max_results=5, filename="my\_publications")
+request("LaBollita"; field=author, max_results=5, filename="my_publications")
 ```
 
 ## Contributing
