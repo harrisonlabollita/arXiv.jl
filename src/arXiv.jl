@@ -1,10 +1,9 @@
 module arXiv
 using Base: Integer
-using LightXML
-using HTTP
 
 include("types.jl")
 include("message.jl")
+include("url2xml.jl")
 include("xml2bib.jl")
 include("bib2tex.jl")
 
@@ -21,7 +20,7 @@ include("bib2tex.jl")
 
 # default: 
 ```julia
-request(keyword; field = all_fields, sort_by = relevance, sort_order = descending, max_results = 10, filename = "arxiv2bib")
+request(keyword; field=all_fields, sort_by=relevance, sort_order=descending, max_results=10, filename="arxiv2bib")
 ```
 
 # details:
@@ -49,7 +48,7 @@ request(keyword; field = all_fields, sort_by = relevance, sort_order = descendin
 ```jldoctest
 julia> request("electron")
 
-julia> request("LaBollita"; field=author, max_results=5, filename="my\_publications")
+julia> request("LaBollita"; field=author, max_results=5, filename="my_publications")
 ```
 """
 function request(
@@ -67,10 +66,8 @@ function request(
     base *= "sortOrder=$(sort_order)&"
     base *= "max_results=$(max_results)"
 
-    r = HTTP.request(:GET, base)
-    xmlString = parse_string(String(r.body))
-    master = root(xmlString)
-    entries = find_all_elements(master, "entry")
+    xml = url2xml(base)
+    entries = find_all_elements(xml, "entry")
     bibs = extract_bib_info(entries)
     bibtex(bibs, filename)
 end
