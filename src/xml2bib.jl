@@ -1,7 +1,9 @@
 using LightXML:XMLElement
 using LightXML:name, child_elements, content, find_element
 
-
+"""
+find all elements in a XMLElement object that match the string n.
+"""
 function find_all_elements(x::XMLElement, n::String) ::Vector{XMLElement} # hopefully this will be added to LightXML.jl
     matched = XMLElement[]
     for c in child_elements(x)

@@ -70,6 +70,7 @@ function request(
     entries = find_all_elements(xml, "entry")
     bibs = extract_bib_info(entries)
     bibtex(bibs, filename)
+    bibs
 end
 
 export request
