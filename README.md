@@ -12,6 +12,13 @@ http://export.arxiv.org/api/{method_name}?{parameters}
 
 and makes an HTTP pull request to get the information and generates the information into a bib file with the proper formatting accepted by most academic journals.
 
+
+## Installation
+
+```julia
+]add arXiv
+```
+
 ## Examples
 
 Load the arXiv.jl Julia package!
