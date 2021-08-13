@@ -33,3 +33,5 @@ julia> request("electron")
 
 julia> request("LaBollita"; field=author, max_results=5, filename="my_publications")
 ```
+
+# PRs are welcome!
