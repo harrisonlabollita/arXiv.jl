@@ -56,6 +56,7 @@ function request(
     field::Field = all_fields,
     sort_by::SortBy = relevance,
     sort_order::SortOrder = descending,
+    start::Integer = 0,
     max_results::Integer = 10,
     filename::String = "arxiv2bib",
 )
@@ -64,13 +65,13 @@ function request(
     api_call *= "$(keyword)&"
     api_call *= "sortBy=$(sort_by)&"
     api_call *= "sortOrder=$(sort_order)&"
+    api_call *= "start=$(start)&"
     api_call *= "max_results=$(max_results)"
 
     xml = url2xml(api_call)
     entries = find_all_elements(xml, "entry")
     bibs = extract_bib_info(entries)
     bibtex(bibs, filename)
-    bibs
 end
 
 export request
