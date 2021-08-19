@@ -40,3 +40,6 @@ request("LaBollita"; field=author, max_results=5, filename="my_publications")
 
 ## Contributing
 If you have any suggestions or thoughts on how to improve our package please submit and issue or create a pull request. We greatly appreciate it.
+
+## Acknowledgement
+Thank you to arXiv for use of its open access interoperability.
