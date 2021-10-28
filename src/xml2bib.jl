@@ -1,6 +1,4 @@
-using LightXML: XMLElement
-using LightXML: name, child_elements, content, find_element
-
+using LightXML
 
 """
 remove bib info from the xml data pulled from the arXiv API.
