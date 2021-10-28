@@ -14,6 +14,7 @@ mutable struct BibInfo
     url::String
     year::String
     authors::Vector{String}
+    affiliations::Vector{String} # ! This field is currently not used in bib generation.
     title::String
     key::String
     journal::String

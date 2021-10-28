@@ -1,5 +1,6 @@
 module arXiv
 using Base: Integer
+using LightXML
 
 include("types.jl")
 include("message.jl")
@@ -62,14 +63,16 @@ function request(
 )
     search_msg(keyword, field, sort_by, sort_order, max_results)
     api_call = "http://export.arxiv.org/api/query?search_query=$(n2f[field]):"
-    api_call *= "$(keyword)&"
+    keyword = replace(keyword, " " => "%20")
+    api_call *= "\"$(keyword)\"&"
     api_call *= "sortBy=$(sort_by)&"
     api_call *= "sortOrder=$(sort_order)&"
     api_call *= "start=$(start)&"
     api_call *= "max_results=$(max_results)"
 
+    print(api_call)
     xml = url2xml(api_call)
-    entries = find_all_elements(xml, "entry")
+    entries = get_elements_by_tagname(xml, "entry")
     bibs = extract_bib_info(entries)
     bibtex(bibs, filename)
 end

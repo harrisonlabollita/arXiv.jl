@@ -1,5 +1,4 @@
 using HTTP: request as rq
-using LightXML: parse_string, root
 
 function url2xml(url::String)
     r = rq(:GET, url)

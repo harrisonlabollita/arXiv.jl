@@ -1,16 +1,6 @@
-using LightXML:XMLElement
-using LightXML:name, child_elements, content, find_element
+using LightXML: XMLElement
+using LightXML: name, child_elements, content, find_element
 
-"""
-find all elements in a XMLElement object that match the string n.
-"""
-function find_all_elements(x::XMLElement, n::String) ::Vector{XMLElement} # hopefully this will be added to LightXML.jl
-    matched = XMLElement[]
-    for c in child_elements(x)
-        name(c) == n && push!(matched, c)
-    end
-    return matched
-end
 
 """
 remove bib info from the xml data pulled from the arXiv API.
@@ -18,10 +8,20 @@ remove bib info from the xml data pulled from the arXiv API.
 function extract_bib_info(entries::Vector{XMLElement})
     bibs = BibInfo[]
     bib = BibInfo()
+    bib.authors = String[]
+    bib.affiliations = String[]
     for entry in entries
         bib.url = strip(content(find_element(entry, "id")))
         bib.year = content(find_element(entry, "published"))[1:4]
-        bib.authors = [strip(content(el)) for el in find_all_elements(entry, "author")]
+        authors = get_elements_by_tagname(entry, "author")
+        names = get_elements_by_tagname.(authors, "name")
+        affiliations = get_elements_by_tagname.(authors, "affiliation")
+        for a in names, b in a
+            push!(bib.authors, content(b))
+        end
+        for a in affiliations, b in a
+            push!(bib.affiliations, content(b))
+        end
         bib.title = content(find_element(entry, "title"))
         first_author = split(bib.authors[1], " ")
         bib.key =
